@@ -1,0 +1,62 @@
+package sqliteDatabase;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class MainApp {
+
+	public static final String DB_NAME = "testjava.db";
+	public static final String CONNECTION_MACOS_DB = "jdbc:sqlite:../sqliteDatabase/" + DB_NAME;
+	public static final String CONNECTION_WINDOWSOS_DB = "jdbc:sqlite:..\\sqliteDatabase\\" + DB_NAME;
+	
+	public static void main(String[] args) {
+	
+		try {
+			Connection conn = DriverManager.getConnection(CONNECTION_MACOS_DB); 
+			Statement statement = conn.createStatement();
+			
+//			conn.setAutoCommit(false);
+			
+			statement.execute("CREATE TABLE IF NOT EXISTS contacts" +
+							"(name TEXT, " +
+							" phone INTEGER," +
+							" email TEXT);");
+			
+//			statement.execute("INSERT INTO contacts (name, phone, email)" +
+//							  "VALUES ('Joe', 4074461787, 'joe@email.com')," + 
+//									 "('Jane', 2768810901, 'jane@email.com')," +
+//									 "('Fido', 9743215498, 'fido@email.com')");
+			
+//			statement.executeQuery("UPDATE contacts SET phone = 5688990000 WHERE name='Jane'");
+			
+//			statement.executeQuery("DELETE FROM contacts WHERE name='Jane'");
+			
+//			statement.execute("SELECT * FROM contacts;");
+//			ResultSet result = statement.getResultSet();
+			
+			ResultSet result = statement.executeQuery("SELECT * FROM contacts;");
+					
+			while (result.next()) {
+				System.out.println(result.getString("name") + "   |   " + 
+								   result.getLong("phone") +  "   |   " + 
+								   result.getString("email") );
+			}
+			
+			
+			result.close();
+			statement.close();
+			conn.close();
+			
+			
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+}

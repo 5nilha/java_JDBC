@@ -1,0 +1,74 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+public class MainApp {
+	private static final String DB_NAME = "testjava.db";
+	private static final String URL_DB = "jdbc:sqlite:../sqliteDatabase/" + DB_NAME;
+	
+	public static void main(String[] args) {
+		
+		try {
+			Connection conn = DriverManager.getConnection(URL_DB);
+			Statement statement = conn.createStatement();
+			
+			//Creating a Table
+			statement.execute(createTable());
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
+	
+	public static String createTable() {
+		String sql = "CREATE TABLE IF NOT EXISTS people (" +
+					 "person_id INTEGER PRIMARY KEY AUTO_INCREMENT, \n" +
+					 "first_name VARCHAR(20), \n" +
+					 "last_name VARCHAR(20), \n" +
+					 "age INTEGER, \n" +
+					 "ssn INTEGER, \n" +
+					 "credit_card INTEGER );";
+		
+		return sql;
+	}
+	
+	
+	public static void insertPerson(Statement statement, String firstName, String lastName, int age, long ssn, long creditCard) throws SQLException {
+		String sql = "INSERT INTO people (first_name, last_name, age, ssn, credit_card) " +
+					 "VALUES ('" + firstName + "', '" + lastName + "', '" + age + "', '" + ssn + "', '" + creditCard + "');"; 
+			
+				
+		statement.executeUpdate(sql);
+		
+	}
+	
+	public static void selectPerson(Statement statement, String firstName) {
+		String sql = "SELECT * FROM people WHERE first_name =" + firstName + ";";
+	}
+
+	public static ArrayList<Person> findAllPeople(Statement statement) throws SQLException {
+		
+		ArrayList<Person> person = new ArrayList<Person>();
+		String sql = "SELECT * FROM people;";
+		
+		ResultSet result = statement.executeQuery(sql);
+		
+		while (result.next()) {
+			String first_name = result.getString("first_name");
+			String last_name = result.getString("last_name");
+			int age = result.getInt("age");
+			long ssn = result.getInt("ssn");
+			long credit_card = result.getInt("credit_card");
+			
+			person.add(new Person(first_name, last_name, age, ssn, credit_card));
+			
+		}
+		
+		return person;
+	}
+}

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename type &apos;jdbcMysqlDemo.DemoTest&apos; to &apos;InsertDataTets&apos;&#x0A;- Original project: &apos;jdbcMysqlDemo&apos;&#x0A;- Original element: &apos;jdbcMysqlDemo.DemoTest&apos;&#x0A;- Renamed element: &apos;jdbcMysqlDemo.InsertDataTets&apos;&#x0A;- Update references to refactored element&#x0A;- Update textual occurrences in comments and strings" description="Rename type &apos;DemoTest&apos;" flags="589830" id="org.eclipse.jdt.ui.rename.type" input="/src&lt;jdbcMysqlDemo{DemoTest.java[DemoTest" matchStrategy="1" name="InsertDataTets" qualified="false" references="true" similarDeclarations="false" stamp="1508400539980" textual="false" version="1.0"/>
+</session>

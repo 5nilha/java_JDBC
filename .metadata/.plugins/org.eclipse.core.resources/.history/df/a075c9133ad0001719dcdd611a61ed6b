@@ -1,0 +1,135 @@
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+public class MainApp {
+	private static final String DB_NAME = "people.db";
+	private static final String URL_DB = "jdbc:sqlite:../SqliteRDB/" + DB_NAME;
+	public static ResultSet result;
+	
+	public static void main(String[] args) {
+		
+		try {
+			Connection conn = DriverManager.getConnection(URL_DB);
+			Statement statement = conn.createStatement();
+			
+			//Creating a Table
+			createTable(statement);
+			
+			//Inserting data into the table
+			insertPerson(statement, new Person("Thomas", "Hardy", 30, 678234332, 5987071254374874871L));
+			insertPerson(statement, new Person("Mary", "Sanders", 28, 681313312, 5324782374878473848L));
+			insertPerson(statement, new Person("Joe", "Berglund", 42, 692194899, 4898947847647637637L));
+			
+			//Retrieving data 
+			Person person1 = selectPerson(statement, "Hardy");
+			System.out.println(person1.getFirstName() + "   | " +  person1.getLastName() + "   | " + person1.getAge() + "   | " + person1.getSsn() + "   | " + person1.getCreditCard());
+			retrievingPerson(statement, "Sanders");
+			
+			//finding all people
+			for (Person person : findAllPeople(statement)) {
+				System.out.println(person.getFirstName());
+			}
+			
+			//deleting Data
+			deletePerson(statement, "Joe", "Berglung");
+			
+			
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+	}
+	
+	public static void createTable(Statement statement) throws SQLException {
+		String sql = "CREATE TABLE IF NOT EXISTS people (" +
+					 "person_id INTEGER PRIMARY KEY, \n" +
+					 "first_name VARCHAR(20), \n" +
+					 "last_name VARCHAR(20), \n" +
+					 "age INTEGER, \n" +
+					 "ssn BIGINT, \n" +
+					 "credit_card BIGINT );";
+		
+		statement.execute(sql);
+	}
+	
+	
+	public static void insertPerson(Statement statement, Person person) throws SQLException {
+		String firstName = person.getFirstName();
+		String lastName = person.getLastName(); 
+		int age = person.getAge(); 
+		long ssn = person.getSsn(); 
+		long creditCard = person.getCreditCard();
+		
+		String sql = "INSERT INTO people (first_name, last_name, age, ssn, credit_card) " +
+					 "VALUES ('" + firstName + "', '" + lastName + "', '" + age + "', '" + ssn + "', '" + creditCard + "');"; 
+			
+				
+		statement.executeUpdate(sql);
+		
+	}
+	
+	public static void retrievingPerson(Statement statement, String lastName) throws SQLException {
+		String sql = "SELECT * FROM people WHERE last_name ='" + lastName + "';";
+		
+		result = statement.executeQuery(sql);
+		
+		while (result.next()) {
+			System.out.println(result.getString("first_name") + "     " + result.getString("last_name") + "      " + result.getInt("age") + "       " + result.getLong("ssn") + "      "  +  result.getLong("credit_card"));  
+		}
+	}
+	
+	
+	public static Person selectPerson(Statement statement, String lastName) throws SQLException {
+		String sql = "SELECT * FROM people WHERE last_name ='" + lastName + "';";
+		
+		result = statement.executeQuery(sql);
+		Person person = new Person();
+		
+		while (result.next()) {
+			person.setFirstName(result.getString("first_name"));
+			person.setLastName(result.getString("last_name"));
+			person.setAge(result.getInt("age"));
+			person.setSsn(result.getLong("ssn"));
+			person.setCreditCard(result.getLong("credit_card"));  
+		}
+		
+		return person;
+	}
+	
+	
+
+	public static ArrayList<Person> findAllPeople(Statement statement) throws SQLException {
+		
+		ArrayList<Person> person = new ArrayList<Person>();
+		String sql = "SELECT * FROM people;";
+		
+		result = statement.executeQuery(sql);
+		
+		while (result.next()) {
+			String firstName = result.getString("first_name");
+			String lastName = result.getString("last_name");
+			int age = result.getInt("age");
+			long ssn = result.getLong("ssn");
+			long creditCard = result.getLong("credit_card");
+			
+			person.add(new Person(firstName, lastName, age, ssn, creditCard));
+			
+		}
+		
+		return person;
+	}
+	
+	
+	public static void deletePerson(Statement statement, String firstName, String lastName) throws SQLException {
+		String sql = "DELETE FROM people WHERE first_name='" + firstName + "' AND last_name='" + lastName + "';";
+		
+		System.out.println("Deleting...." + statement.executeUpdate(sql));
+		findAllPeople(statement);
+	}
+}
